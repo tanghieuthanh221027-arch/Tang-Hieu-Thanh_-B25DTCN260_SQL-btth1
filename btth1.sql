@@ -40,23 +40,23 @@ CREATE TABLE order_details (
 INSERT INTO customers (full_name, phone, address, customer_type) VALUES
 ('Nguyen Van A', '0900000001', 'Ha Noi', 'VIP'),
 ('Tran Thi B', '0900000002', 'Hai Phong', 'Normal'),
-('Le Van C', '0900000003', 'Da Nang', 'VIP'),
-('Pham Thi D', '0900000004', 'HCM', 'Normal'),
+('Nguyen Van C', '0900000003', 'Da Nang', 'VIP'),
+('Pham Thi D', '0900000004', 'Ha Noi', 'Normal'),
 ('Hoang Van E', '0900000005', 'Hue', 'Normal'),
-('Do Thi F', '0900000006', 'Can Tho', 'Normal'),
-('Vu Van G', '0900000007', 'Quang Ninh', 'Normal');
+('Le Thi F', '0900000006', 'Can Tho', 'Normal'),
+('Vu Van G', '0900000007', 'Quang Ninh', 'Normal'),
+('Do Van H', '0900000008', 'Hai Duong', 'Normal');
 
 INSERT INTO products (product_name, category, price, stock) VALUES
+('Coca Cola', 'Nước giải khát', 10000, 100),
+('Pepsi', 'Nước giải khát', 12000, 80),
+('Trà xanh', 'Nước giải khát', 15000, 50),
+('Nước cam', 'Nước giải khát', 30000, 20),
+('Red Bull', 'Nước giải khát', 20000, 0),
 ('Laptop', 'Electronics', 15000000, 10),
 ('Mouse', 'Electronics', 200000, 50),
-('Keyboard', 'Electronics', 500000, 30),
 ('T-Shirt', 'Fashion', 150000, 100),
-('Jeans', 'Fashion', 400000, 60),
-('Jacket', 'Fashion', 800000, 0),
-('Sofa', 'Home', 7000000, 5),
-('Table', 'Home', 2000000, 15),
-('Chair', 'Home', 500000, 40),
-('Lamp', 'Home', 300000, 25);
+('Sofa', 'Home', 7000000, 5);
 
 INSERT INTO orders (customer_id, order_date, status) VALUES
 (1, '2026-04-01', 'completed'),
@@ -66,21 +66,40 @@ INSERT INTO orders (customer_id, order_date, status) VALUES
 (5, '2026-04-05', 'completed');
 
 INSERT INTO order_details (order_id, product_id, quantity, total_price) VALUES
-(1, 1, 1, 15000000),
-(1, 2, 2, 400000),
-(1, 3, 1, 500000),
-(2, 4, 2, 300000),
-(2, 5, 1, 400000),
-(3, 6, 1, 800000),
-(3, 7, 1, 7000000),
-(4, 8, 1, 2000000),
-(4, 9, 2, 1000000),
-(5, 10, 2, 600000),
-(5, 2, 1, 200000),
-(5, 3, 1, 500000);
+(1, 1, 2, 20000),
+(1, 2, 1, 12000),
+(2, 3, 3, 45000),
+(3, 4, 1, 30000),
+(4, 6, 1, 15000000),
+(5, 7, 2, 400000);
 
-UPDATE products 
-SET stock = stock - 5 
+UPDATE products
+SET stock = stock - 5
 WHERE id = 1;
 
 SELECT * FROM products;
+
+SELECT *
+FROM products
+WHERE category = 'Nước giải khát' AND price BETWEEN 10000 AND 50000 AND stock > 0;
+
+SELECT *
+FROM customers
+WHERE full_name LIKE 'Nguyen%' OR address = 'Ha Noi';
+
+SELECT o.id AS order_id,o.order_date,o.status,c.full_name
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+ORDER BY o.order_date DESC;
+
+SELECT c.full_name,o.order_date,p.product_name,od.quantity,p.price AS unit_price
+FROM order_details od
+JOIN orders o ON od.order_id = o.id
+JOIN customers c ON o.customer_id = c.id
+JOIN products p ON od.product_id = p.id;
+
+SELECT *
+FROM customers
+WHERE id NOT IN (
+    SELECT customer_id FROM orders WHERE customer_id IS NOT NULL
+);
